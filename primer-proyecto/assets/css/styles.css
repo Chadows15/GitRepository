@@ -1,0 +1,158 @@
+body {
+  margin: 0;
+}
+
+/* Títulos y párrafos */
+h2 {
+  font-family: "Sixtyfour", sans-serif;
+}
+
+h3 {
+  font-family: "Sixtyfour", sans-serif;
+}
+
+p {
+  font-family: "Monda", sans-serif;
+}
+
+/* Barra de navegación */
+nav {
+  width: 100%;
+  background-color: #0e0e0e;
+}
+
+nav ul {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 30px;
+
+  margin: 0;
+  padding: 15px 30px;
+  list-style: none;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-family: "Monda", sans-serif;
+  font-size: 18px;
+}
+
+nav a:hover {
+  color: #671bd8;
+}
+
+/* Portada con la imagen de fondo */
+.portada {
+  height: calc(100vh - 50px);
+
+  background-image:
+    linear-gradient(#00000059, #00000059),
+    url("/assets/Images/Fondo-principal.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  color: white;
+}
+
+/* Título centrado sobre la imagen */
+.portada h1 {
+  margin: 0;
+  padding: 0;
+  font-family: "Sixtyfour", sans-serif;
+  font-size: 90px;
+  text-shadow: 3px 3px 6px #000000;
+}
+
+/* Secciones que aparecen después de la imagen */
+.contenido {
+  min-height: 400px;
+  padding: 60px 30px;
+  background-color: white;
+  text-align: center;
+}
+
+.contenido p {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+/* Sección de sugerencias */
+#sugerencias {
+  background-color: #f2f2f2;
+}
+
+/* Formulario */
+#sugerencias form {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* Contenedor del formulario */
+#sugerencias fieldset {
+  padding: 25px;
+  border: 2px solid #671bd8;
+  border-radius: 10px;
+  background-color: white;
+}
+
+/* Título del formulario */
+#sugerencias legend {
+  padding: 0 10px;
+  color: #671bd8;
+  font-family: "Sixtyfour", sans-serif;
+  font-size: 20px;
+}
+
+/* Etiquetas */
+#sugerencias label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-family: "Monda", sans-serif;
+}
+
+/* Campos de texto */
+#sugerencias input,
+#sugerencias textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  font-family: "Monda", sans-serif;
+  font-size: 16px;
+}
+
+/* Evita que el usuario agrande demasiado el textarea */
+#sugerencias textarea {
+  resize: vertical;
+}
+
+/* Botón */
+#sugerencias button {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  background-color: #671bd8;
+  color: white;
+  font-family: "Monda", sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#sugerencias button:hover {
+  background-color: #4d109f;
+}
+
