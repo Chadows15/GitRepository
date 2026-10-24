@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión | UniLendar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Monda:wght@400..700&family=Sixtyfour&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+  <header>
+    <nav aria-label="Principal">
+      <ul>
+        <li>
+          <a href="../index.html">Inicio</a>
+        </li>
+        <li>
+          <a href="../index.html#dudas">Dudas</a>
+        </li>
+        <li>
+          <a href="../index.html#sugerencias">Sugerencias</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main class="auth-main">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <h1 id="auth-title">Bienvenido</h1>
+      <p class="auth-subtitle">Entra para ver tu malla y tus actividades</p>
+      <form id="login-form" novalidate>
+        <label for="login-email">Correo</label>
+        <input type="email" id="login-email" name="email" autocomplete="email" required>
+        <label for="login-password">Contraseña</label>
+        <input type="password" id="login-password" name="password" autocomplete="current-password" required minlength="6">
+        <p class="form-error" id="login-error" role="alert"></p>
+        <button type="submit" class="btn">Entrar</button>
+      </form>
+      <form id="register-form" novalidate hidden>
+        <label for="reg-name">Nombre</label>
+        <input type="text" id="reg-name" name="name" autocomplete="name" required>
+        <label for="reg-email">Correo</label>
+        <input type="email" id="reg-email" name="email" autocomplete="email" required>
+        <label for="reg-password">Contraseña</label>
+        <input type="password" id="reg-password" name="password" autocomplete="new-password" required minlength="6">
+        <p class="form-error" id="register-error" role="alert"></p>
+        <button type="submit" class="btn">Crear cuenta</button>
+      </form>
+      <p class="auth-switch">
+        <span id="switch-text">¿No tienes cuenta?</span>
+        <button type="button" class="link-button" id="toggle-form">Crear cuenta</button>
+      </p>
+    </section>
+  </main>
+  <footer>
+    <p>Desarrollado por Samuel Teran. Todos los derechos reservados. &copy; 2026 UniLendar.</p>
+  </footer>
+  <script src="../js/login.js"></script>
+</body>
+</html>

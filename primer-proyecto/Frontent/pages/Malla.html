@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi malla académica | UniLendar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Monda:wght@400..700&family=Sixtyfour&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/Pages.css">
+</head>
+<body>
+  <header>
+    <nav aria-label="Principal">
+      <ul>
+        <li>
+          <a href="../index.html">Inicio</a>
+        </li>
+        <li>
+          <a href="malla.html" aria-current="page">Mi malla</a>
+        </li>
+        <li>
+          <button type="button" class="link-button" id="logout">Cerrar sesión</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main class="app-layout">
+    <h1 class="app-title">Mi malla académica</h1>
+
+    <!-- Resumen de avance -->
+    <section class="summary" aria-label="Resumen de avance">
+      <div class="stat"><strong id="count-aprobadas">0</strong><span>Aprobadas</span></div>
+      <div class="stat"><strong id="count-cursando">0</strong><span>Cursando</span></div>
+      <div class="stat"><strong id="count-pendientes">0</strong><span>Pendientes</span></div>
+    </section>
+
+    <!-- Malla: la dibuja js/malla.js a partir de js/data/malla-data.js -->
+    <section class="malla" id="malla" aria-label="Malla curricular"></section>
+
+    <!-- Actividades -->
+    <aside class="activities" aria-label="Actividades">
+      <h2>Mis actividades</h2>
+      <form id="activity-form">
+        <label for="activity-title" class="visually-hidden">Actividad</label>
+        <input type="text" id="activity-title" name="title" placeholder="Ej: Entregar taller de Cálculo" required>
+        <label for="activity-date" class="visually-hidden">Fecha</label>
+        <input type="date" id="activity-date" name="date">
+        <label for="activity-description" class="visually-hidden">Descripción</label>
+        <textarea id="activity-description" name="description" rows="3" placeholder="Descripción (opcional)"></textarea>
+        <button type="submit" class="btn">Agregar</button>
+      </form>
+      <ul id="activity-list"></ul>
+    </aside>
+  </main>
+  <footer>
+    <p>Desarrollado por Samuel Teran. Todos los derechos reservados. &copy; 2026 UniLendar.</p>
+  </footer>
+  <script src="../js/data/malla-data.js"></script>
+  <script src="../js/malla.js"></script>
+</body>
+</html>
