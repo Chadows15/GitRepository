@@ -1,40 +1,61 @@
-
-const CLAVE_SESION = "unilendar.sesion";
 const ESTADOS = ["pendiente", "cursando", "aprobada"];
 const ETIQUETAS = { pendiente: "Pendiente", cursando: "Cursando", aprobada: "Aprobada" };
 
-function leer(clave, valorPorDefecto) {
-  try {
-    const texto = localStorage.getItem(clave);
-    return texto === null ? valorPorDefecto : JSON.parse(texto);
-  } catch (error) {
-    return valorPorDefecto;
-  }
-}
+const sesion = leerSesion();
 
-function guardar(clave, valor) {
-  try {
-    localStorage.setItem(clave, JSON.stringify(valor));
-  } catch (error) {
-  
-  }
-}
-
-const sesion = leer(CLAVE_SESION, null);
 if (sesion === null) {
   window.location.replace("login.html");
 } else {
   iniciar(sesion);
 }
-function iniciar(sesion) {
-  const claveEstados = `unilendar.estados.${sesion.correo}`;
-  const claveActividades = `unilendar.actividades.${sesion.correo}`;
-  let estados = leer(claveEstados, {});
-  let actividades = leer(claveActividades, []);
+
+async function iniciar(sesion) {
+  const zonaMensaje = document.getElementById("app-message");
   const contenedorMalla = document.getElementById("malla");
+  function mostrarMensaje(texto) {
+    zonaMensaje.textContent = texto;
+  }
+  document.getElementById("user-name").textContent = `Hola, ${sesion.usuario.nombre}`;
+  document.getElementById("logout").addEventListener("click", () => {
+    cerrarSesion();
+    window.location.href = "login.html";
+  });
+  let malla;
+  let estados;
+  let actividades;
+
+  try {
+    const [mallaServidor, progreso, actividadesServidor] = await Promise.all([
+      pedirApi("/api/malla", { conSesion: false }),
+      pedirApi("/api/progreso"),
+      pedirApi("/api/actividades")
+    ]);
+    malla = mallaServidor;
+    estados = progreso.estados;
+    actividades = actividadesServidor;
+  } catch (error) {
+    mostrarMensaje(`No se pudieron cargar tus datos: ${error.message}`);
+    return;
+  }
+
+  if (malla.length === 0) {
+    mostrarMensaje("La malla está vacía. Ejecuta «npm run seed» en la carpeta backend.");
+  }
+
   function estadoDe(idMateria) {
     return estados[idMateria] || "pendiente";
   }
+
+  function pintarEstado(tarjeta, boton, materia) {
+    const estado = estadoDe(materia.id);
+    tarjeta.dataset.status = estado;
+    boton.textContent = ETIQUETAS[estado];
+    boton.setAttribute(
+      "aria-label",
+      `${materia.nombre}: ${ETIQUETAS[estado]}. Pulsa para cambiar el estado.`
+    );
+  }
+
   function crearTarjeta(materia) {
     const tarjeta = document.createElement("article");
     tarjeta.className = "course";
@@ -56,41 +77,46 @@ function iniciar(sesion) {
     boton.className = "status-btn";
     tarjeta.append(boton);
     pintarEstado(tarjeta, boton, materia);
-    boton.addEventListener("click", () => {
-      const actual = ESTADOS.indexOf(estadoDe(materia.id));
-      estados[materia.id] = ESTADOS[(actual + 1) % ESTADOS.length];
-      guardar(claveEstados, estados);
+    boton.addEventListener("click", async () => {
+      const anterior = estadoDe(materia.id);
+      const siguiente = ESTADOS[(ESTADOS.indexOf(anterior) + 1) % ESTADOS.length];
+      estados[materia.id] = siguiente;
       pintarEstado(tarjeta, boton, materia);
       actualizarResumen();
+      boton.disabled = true;
+      try {
+        await pedirApi(`/api/progreso/${materia.id}`, { metodo: "PUT", cuerpo: { estado: siguiente } });
+        mostrarMensaje("");
+      } catch (error) {
+        estados[materia.id] = anterior;
+        pintarEstado(tarjeta, boton, materia);
+        actualizarResumen();
+        mostrarMensaje(`No se pudo guardar el cambio: ${error.message}`);
+      } finally {
+        boton.disabled = false;
+      }
     });
     return tarjeta;
   }
-  function pintarEstado(tarjeta, boton, materia) {
-    const estado = estadoDe(materia.id);
-    tarjeta.dataset.status = estado;
-    boton.textContent = ETIQUETAS[estado];
-    boton.setAttribute(
-      "aria-label",
-      `${materia.nombre}: ${ETIQUETAS[estado]}. Pulsa para cambiar el estado.`
-    );
-  }
+
   function dibujarMalla() {
     contenedorMalla.replaceChildren();
-    for (const nivel of MALLA) {
+    for (const nivel of malla) {
       const columna = document.createElement("div");
       columna.className = "semester";
-      const titulo = document.createElement("h2");
-      titulo.textContent = nivel.nombre;
-      columna.append(titulo);
+      const tituloNivel = document.createElement("h2");
+      tituloNivel.textContent = nivel.nombre;
+      columna.append(tituloNivel);
       for (const materia of nivel.materias) {
         columna.append(crearTarjeta(materia));
       }
       contenedorMalla.append(columna);
     }
   }
+
   function actualizarResumen() {
     const cuenta = { pendiente: 0, cursando: 0, aprobada: 0 };
-    for (const nivel of MALLA) {
+    for (const nivel of malla) {
       for (const materia of nivel.materias) {
         cuenta[estadoDe(materia.id)]++;
       }
@@ -99,16 +125,19 @@ function iniciar(sesion) {
     document.getElementById("count-cursando").textContent = cuenta.cursando;
     document.getElementById("count-pendientes").textContent = cuenta.pendiente;
   }
+
   const formActividad = document.getElementById("activity-form");
   const listaActividades = document.getElementById("activity-list");
   const campoTitulo = document.getElementById("activity-title");
   const campoFecha = document.getElementById("activity-date");
   const campoDescripcion = document.getElementById("activity-description");
+
   function formatearFecha(fecha) {
     if (!fecha) return "Sin fecha";
     const [anio, mes, dia] = fecha.split("-");
     return `${dia}/${mes}/${anio}`;
   }
+
   function dibujarActividades() {
     listaActividades.replaceChildren();
     if (actividades.length === 0) {
@@ -127,11 +156,11 @@ function iniciar(sesion) {
       const item = document.createElement("li");
       item.className = "activity";
       const texto = document.createElement("div");
-      const titulo = document.createElement("strong");
-      titulo.textContent = actividad.titulo;
+      const tituloActividad = document.createElement("strong");
+      tituloActividad.textContent = actividad.titulo;
       const fecha = document.createElement("small");
       fecha.textContent = formatearFecha(actividad.fecha);
-      texto.append(titulo, fecha);
+      texto.append(tituloActividad, fecha);
       if (actividad.descripcion) {
         const descripcion = document.createElement("p");
         descripcion.textContent = actividad.descripcion;
@@ -142,37 +171,46 @@ function iniciar(sesion) {
       borrar.className = "delete-btn";
       borrar.textContent = "Eliminar";
       borrar.setAttribute("aria-label", `Eliminar la actividad ${actividad.titulo}`);
-      borrar.addEventListener("click", () => {
-        actividades = actividades.filter((a) => a.id !== actividad.id);
-        guardar(claveActividades, actividades);
-        dibujarActividades();
+      borrar.addEventListener("click", async () => {
+        borrar.disabled = true;
+        try {
+          await pedirApi(`/api/actividades/${actividad.id}`, { metodo: "DELETE" });
+          actividades = actividades.filter((a) => a.id !== actividad.id);
+          mostrarMensaje("");
+          dibujarActividades();
+        } catch (error) {
+          borrar.disabled = false;
+          mostrarMensaje(`No se pudo eliminar: ${error.message}`);
+        }
       });
       item.append(texto, borrar);
       listaActividades.append(item);
     }
   }
-  formActividad.addEventListener("submit", (evento) => {
+
+  formActividad.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     const titulo = campoTitulo.value.trim();
     if (titulo === "") {
       campoTitulo.focus();
       return;
     }
-    actividades.push({
-      id: Date.now(),
-      titulo,
-      fecha: campoFecha.value,
-      descripcion: campoDescripcion.value.trim()
-    });
-    guardar(claveActividades, actividades);
-    formActividad.reset();
-    dibujarActividades();
-  });
-  document.getElementById("logout").addEventListener("click", () => {
+    const botonAgregar = formActividad.querySelector("button[type='submit']");
+    botonAgregar.disabled = true;
     try {
-      localStorage.removeItem(CLAVE_SESION);
-    } catch (error) {}
-    window.location.href = "login.html";
+      const nueva = await pedirApi("/api/actividades", {
+        metodo: "POST",
+        cuerpo: { titulo, fecha: campoFecha.value, descripcion: campoDescripcion.value.trim() }
+      });
+      actividades.push(nueva);
+      formActividad.reset();
+      mostrarMensaje("");
+      dibujarActividades();
+    } catch (error) {
+      mostrarMensaje(`No se pudo guardar la actividad: ${error.message}`);
+    } finally {
+      botonAgregar.disabled = false;
+    }
   });
   dibujarMalla();
   actualizarResumen();

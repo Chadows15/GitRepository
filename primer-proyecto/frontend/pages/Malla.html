@@ -21,6 +21,9 @@
           <a href="malla.html" aria-current="page">Mi malla</a>
         </li>
         <li>
+          <span id="user-name"></span>
+        </li>
+        <li>
           <button type="button" class="link-button" id="logout">Cerrar sesión</button>
         </li>
       </ul>
@@ -28,6 +31,7 @@
   </header>
   <main class="app-layout">
     <h1 class="app-title">Mi malla académica</h1>
+    <p class="app-message" id="app-message" role="status"></p>
 
     <section class="summary" aria-label="Resumen de avance">
       <div class="stat"><strong id="count-aprobadas">0</strong><span>Aprobadas</span></div>
@@ -54,7 +58,8 @@
   <footer>
     <p>Desarrollado por Samuel Teran. Todos los derechos reservados. &copy; 2026 UniLendar.</p>
   </footer>
-  <script src="../js/data/malla-data.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
   <script src="../js/malla.js"></script>
 </body>
 </html>

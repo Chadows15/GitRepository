@@ -237,4 +237,28 @@ nav .link-button:hover { color: var(--color-primary); }
   font-size: 13px;
   cursor: pointer;
 }
+
 .delete-btn:hover { background-color: var(--color-error); color: white; }
+nav span {
+  color: white;
+  font-family: "Monda", sans-serif;
+  font-size: 18px;
+}
+
+.app-message {
+  min-height: 1.2em;
+  margin: 0;
+  color: var(--color-error);
+  font-family: "Monda", sans-serif;
+}
+
+.status-btn:disabled,
+.delete-btn:disabled,
+.btn:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+@media (min-width: 900px) {
+  .app-message { grid-column: 1 / -1; }
+}
