@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Monda:wght@400..700&family=Sixtyfour&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/Pages.css">
+  <link rel="stylesheet" href="../css/pages.css">
 </head>
 <body>
   <header>
@@ -19,6 +19,9 @@
         </li>
         <li>
           <a href="malla.html" aria-current="page">Mi malla</a>
+        </li>
+        <li id="admin-link" hidden>
+          <a href="admin.html">Administración</a>
         </li>
         <li>
           <span id="user-name"></span>
@@ -32,15 +35,12 @@
   <main class="app-layout">
     <h1 class="app-title">Mi malla académica</h1>
     <p class="app-message" id="app-message" role="status"></p>
-
     <section class="summary" aria-label="Resumen de avance">
       <div class="stat"><strong id="count-aprobadas">0</strong><span>Aprobadas</span></div>
       <div class="stat"><strong id="count-cursando">0</strong><span>Cursando</span></div>
       <div class="stat"><strong id="count-pendientes">0</strong><span>Pendientes</span></div>
     </section>
-
     <section class="malla" id="malla" aria-label="Malla curricular"></section>
-
     <aside class="activities" aria-label="Actividades">
       <h2>Mis actividades</h2>
       <form id="activity-form">

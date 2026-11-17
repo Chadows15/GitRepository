@@ -8,7 +8,6 @@ if (sesion === null) {
 } else {
   iniciar(sesion);
 }
-
 async function iniciar(sesion) {
   const zonaMensaje = document.getElementById("app-message");
   const contenedorMalla = document.getElementById("malla");
@@ -16,6 +15,9 @@ async function iniciar(sesion) {
     zonaMensaje.textContent = texto;
   }
   document.getElementById("user-name").textContent = `Hola, ${sesion.usuario.nombre}`;
+  if (sesion.usuario.rol === "admin") {
+    document.getElementById("admin-link").hidden = false;
+  }
   document.getElementById("logout").addEventListener("click", () => {
     cerrarSesion();
     window.location.href = "login.html";
@@ -37,15 +39,12 @@ async function iniciar(sesion) {
     mostrarMensaje(`No se pudieron cargar tus datos: ${error.message}`);
     return;
   }
-
   if (malla.length === 0) {
     mostrarMensaje("La malla está vacía. Ejecuta «npm run seed» en la carpeta backend.");
   }
-
   function estadoDe(idMateria) {
     return estados[idMateria] || "pendiente";
   }
-
   function pintarEstado(tarjeta, boton, materia) {
     const estado = estadoDe(materia.id);
     tarjeta.dataset.status = estado;
@@ -55,7 +54,6 @@ async function iniciar(sesion) {
       `${materia.nombre}: ${ETIQUETAS[estado]}. Pulsa para cambiar el estado.`
     );
   }
-
   function crearTarjeta(materia) {
     const tarjeta = document.createElement("article");
     tarjeta.className = "course";
@@ -98,7 +96,6 @@ async function iniciar(sesion) {
     });
     return tarjeta;
   }
-
   function dibujarMalla() {
     contenedorMalla.replaceChildren();
     for (const nivel of malla) {
@@ -113,7 +110,6 @@ async function iniciar(sesion) {
       contenedorMalla.append(columna);
     }
   }
-
   function actualizarResumen() {
     const cuenta = { pendiente: 0, cursando: 0, aprobada: 0 };
     for (const nivel of malla) {
@@ -125,19 +121,16 @@ async function iniciar(sesion) {
     document.getElementById("count-cursando").textContent = cuenta.cursando;
     document.getElementById("count-pendientes").textContent = cuenta.pendiente;
   }
-
   const formActividad = document.getElementById("activity-form");
   const listaActividades = document.getElementById("activity-list");
   const campoTitulo = document.getElementById("activity-title");
   const campoFecha = document.getElementById("activity-date");
   const campoDescripcion = document.getElementById("activity-description");
-
   function formatearFecha(fecha) {
     if (!fecha) return "Sin fecha";
     const [anio, mes, dia] = fecha.split("-");
     return `${dia}/${mes}/${anio}`;
   }
-
   function dibujarActividades() {
     listaActividades.replaceChildren();
     if (actividades.length === 0) {
@@ -187,7 +180,6 @@ async function iniciar(sesion) {
       listaActividades.append(item);
     }
   }
-
   formActividad.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     const titulo = campoTitulo.value.trim();

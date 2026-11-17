@@ -262,3 +262,47 @@ nav span {
 @media (min-width: 900px) {
   .app-message { grid-column: 1 / -1; }
 }
+
+.admin-layout {
+  display: grid;
+  gap: 25px;
+  padding: 30px 20px;
+  background-color: var(--color-bg);
+}
+
+.panel {
+  padding: 20px;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+  background-color: var(--color-card);
+  color: var(--color-text);
+}
+.panel h2 { margin-top: 0; color: var(--color-primary); font-size: 16px; }
+.suggestion-list { margin: 0; padding: 0; list-style: none; }
+.suggestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-family: "Monda", sans-serif;
+}
+.suggestion strong { display: block; }
+.suggestion small { color: var(--color-muted); }
+.suggestion p { margin: 6px 0 0; overflow-wrap: anywhere; }
+.table-wrap { overflow-x: auto; }
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Monda", sans-serif;
+  font-size: 14px;
+}
+.admin-table th,
+.admin-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  white-space: nowrap;
+}
+.admin-table th { color: var(--color-primary); }

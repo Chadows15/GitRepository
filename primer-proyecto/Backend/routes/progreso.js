@@ -1,5 +1,5 @@
 const express = require("express");
-const Materia = require("../models/materia");
+const Materia = require("../models/Materia");
 const EstadoMateria = require("../models/EstadoMateria");
 const { requerirLogin } = require("../middleware/auth");
 const router = express.Router();

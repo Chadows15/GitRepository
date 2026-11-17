@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración | UniLendar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Monda:wght@400..700&family=Sixtyfour&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+  <header>
+    <nav aria-label="Principal">
+      <ul>
+        <li>
+          <a href="../index.html">Inicio</a>
+        </li>
+        <li>
+          <a href="malla.html">Mi malla</a>
+        </li>
+        <li>
+          <a href="admin.html" aria-current="page">Administración</a>
+        </li>
+        <li>
+          <span id="user-name"></span>
+        </li>
+        <li>
+          <button type="button" class="link-button" id="logout">Cerrar sesión</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main class="admin-layout">
+    <h1 class="app-title">Panel de administración</h1>
+    <p class="app-message" id="app-message" role="status"></p>
+    <section class="summary" aria-label="Resumen general">
+      <div class="stat"><strong id="count-usuarios">0</strong><span>Usuarios</span></div>
+      <div class="stat"><strong id="count-sugerencias">0</strong><span>Sugerencias</span></div>
+      <div class="stat"><strong id="count-actividades">0</strong><span>Actividades</span></div>
+    </section>
+    <section class="panel" aria-labelledby="titulo-sugerencias">
+      <h2 id="titulo-sugerencias">Sugerencias recibidas</h2>
+      <ul class="suggestion-list" id="suggestion-list"></ul>
+    </section>
+    <section class="panel" aria-labelledby="titulo-usuarios">
+      <h2 id="titulo-usuarios">Usuarios registrados</h2>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Rol</th>
+              <th scope="col">Registro</th>
+            </tr>
+          </thead>
+          <tbody id="user-table"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>Desarrollado por Samuel Teran. Todos los derechos reservados. &copy; 2026 UniLendar.</p>
+  </footer>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

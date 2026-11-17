@@ -20,7 +20,6 @@ function validar({ nombre, correo, contrasena }, pideNombre) {
   }
   return "";
 }
-
 function mostrarRegistro(mostrar) {
   formLogin.hidden = mostrar;
   formRegistro.hidden = !mostrar;
@@ -30,7 +29,9 @@ function mostrarRegistro(mostrar) {
   errorLogin.textContent = "";
   errorRegistro.textContent = "";
 }
-
+function paginaDeInicio(usuario) {
+  return usuario.rol === "admin" ? "admin.html" : "malla.html";
+}
 async function enviar(ruta, cuerpo, formulario, zonaError) {
   const boton = formulario.querySelector("button[type='submit']");
   zonaError.textContent = "";
@@ -38,21 +39,20 @@ async function enviar(ruta, cuerpo, formulario, zonaError) {
   try {
     const datos = await pedirApi(ruta, { metodo: "POST", cuerpo, conSesion: false });
     guardarSesion({ token: datos.token, usuario: datos.usuario });
-    window.location.href = "malla.html";
+    window.location.href = paginaDeInicio(datos.usuario);
   } catch (error) {
     zonaError.textContent = error.message;
     boton.disabled = false;
   }
 }
-
 botonAlternar.addEventListener("click", () => {
   mostrarRegistro(formLogin.hidden === false);
 });
-
 formLogin.addEventListener("submit", (evento) => {
   evento.preventDefault();
   const correo = document.getElementById("login-email").value.trim();
   const contrasena = document.getElementById("login-password").value;
+
   const mensaje = validar({ nombre: "", correo, contrasena }, false);
   if (mensaje) {
     errorLogin.textContent = mensaje;
@@ -60,7 +60,6 @@ formLogin.addEventListener("submit", (evento) => {
   }
   enviar("/api/auth/login", { correo, contrasena }, formLogin, errorLogin);
 });
-
 formRegistro.addEventListener("submit", (evento) => {
   evento.preventDefault();
   const nombre = document.getElementById("reg-name").value.trim();
@@ -73,7 +72,7 @@ formRegistro.addEventListener("submit", (evento) => {
   }
   enviar("/api/auth/registro", { nombre, correo, contrasena }, formRegistro, errorRegistro);
 });
-
-if (leerSesion() !== null) {
-  window.location.replace("malla.html");
+const sesionActual = leerSesion();
+if (sesionActual !== null) {
+  window.location.replace(paginaDeInicio(sesionActual.usuario));
 }
