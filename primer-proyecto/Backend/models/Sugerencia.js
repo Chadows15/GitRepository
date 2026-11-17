@@ -22,3 +22,4 @@ const sugerenciaSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Sugerencia", sugerenciaSchema);
+//Mayus

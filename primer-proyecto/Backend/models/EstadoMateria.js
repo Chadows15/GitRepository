@@ -10,3 +10,4 @@ const estadoMateriaSchema = new mongoose.Schema(
 estadoMateriaSchema.index({ usuario: 1, materiaId: 1 }, { unique: true });
 
 module.exports = mongoose.model("EstadoMateria", estadoMateriaSchema);
+//Mayus

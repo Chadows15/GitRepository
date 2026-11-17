@@ -11,3 +11,4 @@ const actividadSchema = new mongoose.Schema(
   { versionKey: false }
 );
 module.exports = mongoose.model("Actividad", actividadSchema);
+//Mayus
