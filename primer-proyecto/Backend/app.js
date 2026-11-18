@@ -15,7 +15,8 @@ app.set("trust proxy", 1);
 const ORIGENES_PERMITIDOS = [
   "http://localhost:3000",
   "http://localhost:5500",
-  "http://127.0.0.1:5500"    
+  "http://127.0.0.1:5500",
+  "https://unilendar.netlify.app"
 ];
 
 app.use(cors({ origin: ORIGENES_PERMITIDOS }));
