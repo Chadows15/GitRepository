@@ -58,8 +58,23 @@
   <footer>
     <p>Desarrollado por Samuel Teran. Todos los derechos reservados. &copy; 2026 UniLendar.</p>
   </footer>
+  <button type="button" class="chat-toggle" id="chat-toggle" aria-expanded="false" aria-controls="chat-panel">Asistente</button>
+  <section class="chat-panel" id="chat-panel" aria-label="Asistente de la malla" hidden>
+    <div class="chat-top">
+      <strong>Asistente UniLendar</strong>
+      <button type="button" class="chat-close" id="chat-close" aria-label="Cerrar el asistente">&times;</button>
+    </div>
+    <div class="chat-log" id="chat-log" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chat-chips"></div>
+    <form class="chat-form" id="chat-form">
+      <label for="chat-input" class="visually-hidden">Tu pregunta</label>
+      <input type="text" id="chat-input" maxlength="300" autocomplete="off" placeholder="Pregunta sobre tu malla..." required>
+      <button type="submit" class="chat-send">Enviar</button>
+    </form>
+  </section>
   <script src="../js/config.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/malla.js"></script>
+  <script src="../js/chatbot.js"></script>
 </body>
 </html>

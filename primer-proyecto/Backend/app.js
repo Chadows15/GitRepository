@@ -8,6 +8,7 @@ const authRoutes = require("./routes/auth");
 const progresoRoutes = require("./routes/progreso");
 const actividadesRoutes = require("./routes/actividades");
 const adminRoutes = require("./routes/admin");
+const chatbotRoutes = require("./routes/chatbot.js");
 const app = express();
 
 app.set("trust proxy", 1);
@@ -30,6 +31,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/progreso", progresoRoutes);
 app.use("/api/actividades", actividadesRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 app.use("/api", (req, res) => {
   res.status(404).json({ error: "Ruta de la API no encontrada" });
 });
