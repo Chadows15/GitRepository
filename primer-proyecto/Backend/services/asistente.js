@@ -1,17 +1,5 @@
-// services/asistente.js: el asistente de la malla, hecho con reglas (sin claves ni servicios externos).
-//
-// Recibe una pregunta en texto y devuelve una respuesta en texto. Entiende preguntas sobre:
-//   - la malla (créditos, horas, nivel y código de una materia; materias de un nivel; totales)
-//   - el avance del estudiante (aprobadas, cursando, pendientes, porcentaje)
-//   - sus actividades (todas o la próxima)
-//
-// No inventa datos: si algo no está cargado (los prerrequisitos), lo dice.
-
 const URL_MALLA_OFICIAL = "https://mallacurricular.espol.edu.ec/Malla/Imagen?codCarrera=CI013";
 
-/* ---------- Utilidades de texto ---------- */
-
-// "¿Cuántos CRÉDITOS?" -> "cuantos creditos"  (minúsculas, sin tildes ni signos)
 function normalizar(texto) {
   return String(texto)
     .toLowerCase()
@@ -22,7 +10,6 @@ function normalizar(texto) {
     .trim();
 }
 
-// Palabras que no ayudan a reconocer una materia.
 const PALABRAS_VACIAS = new Set(
   ("de la el los las un una unos unas y o en que cual cuales cuanto cuantos cuanta cuantas " +
     "tiene tienen tengo hay es son del al para por con mi mis me se lo le como donde dime dame " +
@@ -52,7 +39,6 @@ function formatearFecha(fecha) {
   return `${dia}/${mes}/${anio}`;
 }
 
-// "Hoy" en Ecuador (YYYY-MM-DD), para saber cuál es la próxima actividad.
 function hoyEcuador() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Guayaquil" }).format(new Date());
 }
@@ -60,19 +46,11 @@ function hoyEcuador() {
 const ETIQUETAS = { pendiente: "Pendiente", cursando: "Cursando", aprobada: "Aprobada" };
 const ROMANOS = { 1: "i", 2: "ii", 3: "iii", 4: "iv", 5: "v" };
 
-/* ---------- Buscar materias y niveles en la pregunta ---------- */
-
-// Devuelve las materias que la pregunta menciona (0, 1 o varias).
 function buscarMaterias(q, materias) {
-  // "ingles 3" -> "ingles iii"
   const texto = q.replace(/\bingles ([1-5])\b/, (_, n) => `ingles ${ROMANOS[n]}`);
-
-  // 1) Por código: "ccpg1043"
   const codigos = texto.match(/\b[a-z]{4}\d{4}\b/g) || [];
   const porCodigo = materias.filter((m) => m.codigo && codigos.includes(m.codigo.toLowerCase()));
   if (porCodigo.length > 0) return porCodigo;
-
-  // 2) Por nombre completo ("ingles ii" no se confunde con "ingles i")
   const porNombre = materias.filter((m) => {
     const nombre = normalizar(m.nombre);
     return new RegExp(`(^| )${nombre}( |$)`).test(texto);
@@ -81,36 +59,29 @@ function buscarMaterias(q, materias) {
     const mayor = Math.max(...porNombre.map((m) => m.nombre.length));
     return porNombre.filter((m) => m.nombre.length === mayor);
   }
-
-  // 3) Por palabras sueltas: "estructuras", "bases de datos", "inteligencia"...
   const claves = palabrasClave(texto);
   if (claves.length === 0) return [];
-
   const puntuadas = materias.map((m) => {
     const palabrasNombre = palabrasClave(normalizar(m.nombre));
     let puntos = 0;
     for (const clave of claves) {
       if (palabrasNombre.includes(clave)) {
-        puntos += 2; // la palabra está tal cual
+        puntos += 2;
       } else if (
         clave.length >= 5 &&
         palabrasNombre.some((p) => p.length >= 5 && p.slice(0, 5) === clave.slice(0, 5))
       ) {
-        puntos += 1; // misma raíz: "programar" ~ "programación"
+        puntos += 1;
       }
     }
     return { materia: m, puntos };
   });
-
   const mejor = Math.max(...puntuadas.map((p) => p.puntos));
   if (mejor === 0) return [];
   return puntuadas.filter((p) => p.puntos === mejor).map((p) => p.materia);
 }
 
 const ORDINALES = { primer: 1, segundo: 2, tercer: 3, cuarto: 4, quinto: 5, sexto: 6, septimo: 7, octavo: 8 };
-
-// Devuelve el número de nivel (1 a 8) que menciona la pregunta, o null.
-// Acepta: "N200-I", "nivel 3", "tercer nivel", "semestre 5".
 function buscarNivel(q, niveles) {
   const codigo = q.match(/\bn([1-4])00 ?(ii|i)\b/);
   if (codigo) {
@@ -125,38 +96,47 @@ function buscarNivel(q, niveles) {
   return null;
 }
 
-/* ---------- El asistente ---------- */
-
 const SUGERENCIAS_TEXTO =
   "Prueba con preguntas como:\n" +
   "- ¿Cuántos créditos tiene Estructuras de datos?\n" +
   "- ¿Qué materias hay en N200-I?\n" +
   "- ¿Cuánto llevo aprobado?\n" +
   "- ¿Qué estoy cursando?\n" +
+  "- ¿Qué requisitos tiene Estructuras de datos?\n" +
+  "- ¿Qué puedo cursar?\n" +
   "- ¿Qué actividades tengo?";
 
-// materias:    lista plana [{ id, codigo, nombre, horas, creditos, prerrequisitos, nivel, nivelNombre }]
-// estados:     { "n1-1": "aprobada", ... }  (las que faltan están pendientes)
-// actividades: [{ titulo, fecha, descripcion }]
-function responder(pregunta, { materias, estados = {}, actividades = [] }) {
+function responder(pregunta, { materias: materiasCrudas, estados = {}, actividades = [] }) {
+  const materias = materiasCrudas.map((m) => ({ prerrequisitos: [], correquisitos: [], materiasAprobadasMin: 0, ...m }));
   const q = normalizar(pregunta);
   const estadoDe = (m) => estados[m.id] || "pendiente";
   const creditosDe = (lista) => lista.reduce((suma, m) => suma + (m.creditos || 0), 0);
   const descripcion = (m) => `${m.nombre} (${m.nivelNombre})`;
-
   const niveles = [];
   for (const m of materias) {
     if (!niveles.some((n) => n.nivel === m.nivel)) niveles.push({ nivel: m.nivel, nombre: m.nivelNombre });
   }
-
   const aprobadas = materias.filter((m) => estadoDe(m) === "aprobada");
   const cursando = materias.filter((m) => estadoDe(m) === "cursando");
   const pendientes = materias.filter((m) => estadoDe(m) === "pendiente");
   const totalCreditos = creditosDe(materias);
-
+  const nombreDe = (id) => materias.find((x) => x.id === id || x.codigo === id)?.nombre || id;
+  function faltantesDe(m) {
+    const faltan = [];
+    for (const id of m.prerrequisitos || []) {
+      if (estados[id] !== "aprobada") faltan.push(`aprobar ${nombreDe(id)}`);
+    }
+    for (const id of m.correquisitos || []) {
+      if (estados[id] !== "aprobada" && estados[id] !== "cursando") faltan.push(`cursar ${nombreDe(id)} al mismo tiempo (o tenerla aprobada)`);
+    }
+    if ((m.materiasAprobadasMin || 0) > aprobadas.length) {
+      faltan.push(`tener ${m.materiasAprobadasMin} materias aprobadas (tienes ${aprobadas.length})`);
+    }
+    return faltan;
+  }
+  const tieneRequisitos = (m) =>
+    (m.prerrequisitos || []).length > 0 || (m.correquisitos || []).length > 0 || (m.materiasAprobadasMin || 0) > 0;
   if (q === "") return SUGERENCIAS_TEXTO;
-
-  // --- Saludos y cortesía
   if (/^(hola|buenas|buenos dias|buen dia|hey|saludos)\b/.test(q) && q.split(" ").length <= 4) {
     return "¡Hola! Soy el asistente de tu malla de Computación. Puedo decirte créditos, horas y nivel de cada materia, y cómo vas de avance.\n\n" + SUGERENCIAS_TEXTO;
   }
@@ -165,7 +145,6 @@ function responder(pregunta, { materias, estados = {}, actividades = [] }) {
     return "Soy el asistente de UniLendar, creado por Samuel Teran para resolver dudas sobre la malla de Ingeniería en Ciencias de la Computación y tu avance.";
   }
   if (/(\bayuda\b|que puedes|que sabes|que haces|como funcionas)/.test(q)) return SUGERENCIAS_TEXTO;
-
   // --- Actividades
   if (/(actividad|tarea|entrega|agenda)/.test(q)) {
     if (actividades.length === 0) {
@@ -188,7 +167,14 @@ function responder(pregunta, { materias, estados = {}, actividades = [] }) {
     const cola = resto > 0 ? `\n…y ${resto} más.` : "";
     return `Tienes ${ordenadas.length} ${plural(ordenadas.length, "actividad", "actividades")}:\n${lineas.join("\n")}${cola}`;
   }
-
+  if (/(que puedo (cursar|tomar|ver|matricular)|puedo (cursar|tomar|matricular)|materias disponibles|habilitad)/.test(q)) {
+    const disponibles = pendientes.filter((m) => faltantesDe(m).length === 0);
+    if (disponibles.length === 0) return "Ahora mismo no tienes materias pendientes con todos los requisitos cumplidos.";
+    const lista = disponibles.slice(0, 10).map((m) => `- ${descripcion(m)}`).join("\n");
+    const resto = disponibles.length - Math.min(disponibles.length, 10);
+    return `Cumples los requisitos de ${disponibles.length} ${plural(disponibles.length, "materia pendiente", "materias pendientes")}:\n${lista}` +
+      (resto > 0 ? `\n…y ${resto} más.` : "");
+  }
   if (/(cursando|que curso|estoy tomando)/.test(q)) {
     if (cursando.length === 0) {
       return "No tienes materias marcadas como «Cursando». Puedes marcarlas en tu malla con el botón de estado de cada materia.";
@@ -237,24 +223,43 @@ function responder(pregunta, { materias, estados = {}, actividades = [] }) {
   }
   if (/(prerrequisit|prerequisit|correquisit|requisito|requiere|previa)/.test(q)) {
     const encontradas = buscarMaterias(q, materias);
-    if (encontradas.length === 1 && encontradas[0].prerrequisitos.length > 0) {
+    if (encontradas.length === 1) {
       const m = encontradas[0];
-      const nombres = m.prerrequisitos.map((id) => materias.find((x) => x.id === id || x.codigo === id)?.nombre || id);
-      return `Para ${m.nombre} necesitas: ${nombres.join(", ")}.`;
+      if (!tieneRequisitos(m)) return `${m.nombre} no tiene requisitos: puedes cursarla cuando quieras.`;
+      const lineas = [`Requisitos de ${m.nombre}:`];
+      if (m.prerrequisitos.length > 0) {
+        lineas.push(`- Prerrequisitos (deben estar aprobados): ${m.prerrequisitos.map((id) => `${nombreDe(id)} (${ETIQUETAS[estados[id] || "pendiente"]})`).join(", ")}`);
+      }
+      if (m.correquisitos.length > 0) {
+        lineas.push(`- Correquisitos (se cursan al mismo tiempo o ya aprobados): ${m.correquisitos.map((id) => `${nombreDe(id)} (${ETIQUETAS[estados[id] || "pendiente"]})`).join(", ")}`);
+      }
+      if (m.materiasAprobadasMin > 0) {
+        lineas.push(`- Materias aprobadas necesarias: ${m.materiasAprobadasMin} (tú tienes ${aprobadas.length})`);
+      }
+      const faltan = faltantesDe(m);
+      lineas.push(faltan.length === 0 ? "Ya cumples todos los requisitos." : `Te falta: ${faltan.join("; ")}.`);
+      return lineas.join("\n");
     }
-    const de = encontradas.length === 1 ? ` de ${encontradas[0].nombre}` : "";
-    return `Todavía no tengo cargados los prerrequisitos${de}. Consúltalos en la malla oficial de ESPOL: ${URL_MALLA_OFICIAL}`;
+    if (encontradas.length > 1 && encontradas.length <= 6) {
+      return "¿De cuál materia? Encontré varias:\n" + encontradas.map((m) => `- ${descripcion(m)}`).join("\n");
+    }
+    if (/(que es|que significa|diferencia)/.test(q)) {
+      return "Un prerrequisito es una materia que debes tener aprobada antes. Un correquisito es una materia que debes cursar al mismo tiempo (o haber aprobado ya). Algunas materias piden además un número mínimo de materias aprobadas.";
+    }
+    return "¿De qué materia quieres saber los requisitos? Por ejemplo: «¿Qué requisitos tiene Estructuras de datos?»";
   }
   const encontradas = buscarMaterias(q, materias);
   if (encontradas.length === 1) {
     const m = encontradas[0];
-    return [
+    const ficha = [
       m.nombre,
       `Código: ${m.codigo || "sin código"}`,
       `Nivel: ${m.nivelNombre}`,
       `Créditos: ${m.creditos} · Horas: ${m.horas}`,
       `Tu estado: ${ETIQUETAS[estadoDe(m)]}`
-    ].join("\n");
+    ];
+    if (tieneRequisitos(m)) ficha.push(`Pregúntame «requisitos de ${m.nombre}» para ver qué necesitas.`);
+    return ficha.join("\n");
   }
   if (encontradas.length > 1 && encontradas.length <= 6) {
     return `Encontré ${encontradas.length} materias que coinciden. ¿Cuál quieres?\n` +
@@ -263,7 +268,6 @@ function responder(pregunta, { materias, estados = {}, actividades = [] }) {
   if (encontradas.length > 6) {
     return "Eso coincide con muchas materias. ¿Puedes ser más específico? Por ejemplo, escribe el nombre completo o el código.";
   }
-
   return "No estoy seguro de haber entendido tu pregunta.\n\n" + SUGERENCIAS_TEXTO;
 }
 

@@ -24,8 +24,7 @@ async function iniciar(sesion) {
   });
   let malla;
   let estados;
-  let actividades;
-
+  let actividades;  
   try {
     const [mallaServidor, progreso, actividadesServidor] = await Promise.all([
       pedirApi("/api/malla", { conSesion: false }),
@@ -39,11 +38,54 @@ async function iniciar(sesion) {
     mostrarMensaje(`No se pudieron cargar tus datos: ${error.message}`);
     return;
   }
+  for (const nivel of malla) {
+    nivel.materias = nivel.materias.map((m) => ({
+      prerrequisitos: [],
+      correquisitos: [],
+      materiasAprobadasMin: 0,
+      ...m
+    }));
+  }
   if (malla.length === 0) {
     mostrarMensaje("La malla está vacía. Ejecuta «npm run seed» en la carpeta backend.");
   }
   function estadoDe(idMateria) {
     return estados[idMateria] || "pendiente";
+  }
+  const nombrePorId = {};
+  for (const nivel of malla) {
+    for (const materia of nivel.materias) nombrePorId[materia.id] = materia.nombre;
+  }
+  const tarjetasConRequisitos = [];
+  function tieneRequisitos(materia) {
+    return materia.prerrequisitos.length > 0 || materia.correquisitos.length > 0 || materia.materiasAprobadasMin > 0;
+  }
+  function textoRequisitos(materia) {
+    const partes = [];
+    if (materia.prerrequisitos.length > 0) {
+      partes.push(`Requiere aprobar: ${materia.prerrequisitos.map((id) => nombrePorId[id]).join(", ")}`);
+    }
+    if (materia.correquisitos.length > 0) {
+      partes.push(`Correquisito: ${materia.correquisitos.map((id) => nombrePorId[id]).join(", ")}`);
+    }
+    if (materia.materiasAprobadasMin > 0) {
+      partes.push(`Requiere ${materia.materiasAprobadasMin} materias aprobadas`);
+    }
+    return partes.join(" · ");
+  }
+  function cumpleRequisitos(materia, totalAprobadas) {
+    return (
+      materia.prerrequisitos.every((id) => estadoDe(id) === "aprobada") &&
+      materia.correquisitos.every((id) => estadoDe(id) !== "pendiente") &&
+      totalAprobadas >= materia.materiasAprobadasMin
+    );
+  }
+  function actualizarRequisitos(totalAprobadas) {
+    for (const { tarjeta, linea, materia } of tarjetasConRequisitos) {
+      const cumple = cumpleRequisitos(materia, totalAprobadas);
+      tarjeta.dataset.requisitos = cumple ? "cumplidos" : "faltan";
+      linea.textContent = `${textoRequisitos(materia)} — ${cumple ? "cumplidos" : "aún no los cumples"}`;
+    }
   }
   function pintarEstado(tarjeta, boton, materia) {
     const estado = estadoDe(materia.id);
@@ -69,6 +111,12 @@ async function iniciar(sesion) {
       const info = document.createElement("p");
       info.textContent = partesInfo.join(" · ");
       tarjeta.append(info);
+    }
+    if (tieneRequisitos(materia)) {
+      const linea = document.createElement("p");
+      linea.className = "course-req";
+      tarjeta.append(linea);
+      tarjetasConRequisitos.push({ tarjeta, linea, materia });
     }
     const boton = document.createElement("button");
     boton.type = "button";
@@ -120,6 +168,7 @@ async function iniciar(sesion) {
     document.getElementById("count-aprobadas").textContent = cuenta.aprobada;
     document.getElementById("count-cursando").textContent = cuenta.cursando;
     document.getElementById("count-pendientes").textContent = cuenta.pendiente;
+    actualizarRequisitos(cuenta.aprobada);
   }
   const formActividad = document.getElementById("activity-form");
   const listaActividades = document.getElementById("activity-list");
@@ -194,7 +243,7 @@ async function iniciar(sesion) {
         metodo: "POST",
         cuerpo: { titulo, fecha: campoFecha.value, descripcion: campoDescripcion.value.trim() }
       });
-      actividades.push(nueva);
+      actividades.push(nueva); 
       formActividad.reset();
       mostrarMensaje("");
       dibujarActividades();

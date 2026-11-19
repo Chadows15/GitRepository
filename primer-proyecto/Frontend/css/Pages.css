@@ -429,3 +429,12 @@ nav span {
 }
 .chat-send:hover { background-color: var(--color-primary-dark); }
 .chat-send:disabled { opacity: .6; cursor: wait; }
+
+.course .course-req {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+.course[data-requisitos="faltan"] .course-req { color: #b45309; }
+.course[data-requisitos="cumplidos"] .course-req { color: var(--color-ok); }

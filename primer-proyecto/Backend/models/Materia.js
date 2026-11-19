@@ -8,6 +8,8 @@ const materiaSchema = new mongoose.Schema(
     horas: { type: Number, required: true },
     creditos: { type: Number, default: null },
     prerrequisitos: { type: [String], default: [] },
+    correquisitos: { type: [String], default: [] },
+    materiasAprobadasMin: { type: Number, default: 0 },
     nivel: { type: Number, required: true },
     nivelNombre: { type: String, required: true },
     orden: { type: Number, required: true }

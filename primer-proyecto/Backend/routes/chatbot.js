@@ -21,15 +21,20 @@ const limitarPreguntas = rateLimit({
 const MODELO_IA = process.env.ANTHROPIC_MODEL || "claude-haiku-5-5";
 
 function armarContexto({ materias, estados, actividades }) {
+  const nombreDe = (id) => materias.find((x) => x.id === id)?.nombre || id;
   const lineasMalla = materias.map((m) => {
     const estado = estados[m.id] || "pendiente";
-    return `${m.nivelNombre} | ${m.codigo || "sin código"} | ${m.nombre} | ${m.creditos} créditos | ${m.horas} h | ${estado}`;
+    const requisitos = [];
+    if (m.prerrequisitos?.length) requisitos.push(`prerrequisitos: ${m.prerrequisitos.map(nombreDe).join(", ")}`);
+    if (m.correquisitos?.length) requisitos.push(`correquisitos: ${m.correquisitos.map(nombreDe).join(", ")}`);
+    if ((m.materiasAprobadasMin || 0) > 0) requisitos.push(`exige ${m.materiasAprobadasMin} materias aprobadas`);
+    return `${m.nivelNombre} | ${m.codigo || "sin código"} | ${m.nombre} | ${m.creditos} créditos | ${m.horas} h | ${estado} | ${requisitos.join("; ") || "sin requisitos"}`;
   });
   const lineasActividades = actividades.map(
     (a) => `${a.fecha || "sin fecha"} | ${a.titulo}${a.descripcion ? " | " + a.descripcion : ""}`
   );
   return (
-    "MALLA Y AVANCE DEL ESTUDIANTE (nivel | código | materia | créditos | horas | estado):\n" +
+    "MALLA Y AVANCE DEL ESTUDIANTE (nivel | código | materia | créditos | horas | estado | requisitos):\n" +
     lineasMalla.join("\n") +
     "\n\nACTIVIDADES DEL ESTUDIANTE (fecha | título | descripción):\n" +
     (lineasActividades.length > 0 ? lineasActividades.join("\n") : "ninguna")
@@ -41,8 +46,9 @@ const INSTRUCCIONES_IA =
   "Respondes en español, de forma amable y breve (máximo 120 palabras), en texto plano sin markdown. " +
   "Solo hablas de la malla curricular, el avance del estudiante y sus actividades; si te preguntan otra cosa, " +
   "explica con amabilidad que solo puedes ayudar con eso. " +
-  "Usa únicamente los datos que se te dan. Los prerrequisitos NO están cargados: si te los piden, dilo y " +
-  "remite a https://mallacurricular.espol.edu.ec/Malla/Imagen?codCarrera=CI013. No inventes datos.\n\n";
+  "Usa únicamente los datos que se te dan; no inventes datos. Un prerrequisito debe estar aprobado antes; " +
+  "un correquisito se cursa al mismo tiempo o ya aprobado. Al hablar de requisitos, compara con el estado " +
+  "del estudiante.\n\n";
 
 async function responderConIA(mensaje, datos) {
   const respuesta = await fetch("https://api.anthropic.com/v1/messages", {
@@ -60,7 +66,6 @@ async function responderConIA(mensaje, datos) {
     }),
     signal: AbortSignal.timeout(15000)
   });
-
   if (!respuesta.ok) {
     throw new Error(`La IA respondió ${respuesta.status}`);
   }
@@ -71,6 +76,7 @@ async function responderConIA(mensaje, datos) {
 }
 router.post("/", limitarPreguntas, async (req, res) => {
   const mensaje = typeof req.body?.mensaje === "string" ? req.body.mensaje.trim() : "";
+
   if (mensaje === "") {
     return res.status(400).json({ error: "Escribe tu pregunta" });
   }

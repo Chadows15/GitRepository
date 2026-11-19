@@ -9,7 +9,9 @@
         "nombre": "Cálculo de una variable",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n1-2",
@@ -17,7 +19,11 @@
         "nombre": "Física: Mecánica",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [
+          "n1-1"
+        ],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n1-3",
@@ -25,7 +31,9 @@
         "nombre": "Análisis y resolución de problemas",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n1-4",
@@ -33,7 +41,9 @@
         "nombre": "Fundamentos de programación",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n1-5",
@@ -41,7 +51,9 @@
         "nombre": "Complementarias de artes, deportes e idiomas",
         "horas": 3,
         "creditos": 1,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n1-6",
@@ -49,7 +61,9 @@
         "nombre": "Inglés I",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       }
     ]
   },
@@ -63,7 +77,11 @@
         "nombre": "Álgebra lineal",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n1-1"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n2-2",
@@ -71,7 +89,11 @@
         "nombre": "Cálculo vectorial",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n1-1"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n2-3",
@@ -79,7 +101,9 @@
         "nombre": "Computación y sociedad",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n2-4",
@@ -87,7 +111,11 @@
         "nombre": "Programación orientada a objetos",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n1-4"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n2-5",
@@ -95,7 +123,9 @@
         "nombre": "Comunicación",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 6
       },
       {
         "id": "n2-6",
@@ -103,7 +133,11 @@
         "nombre": "Inglés II",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n1-6"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       }
     ]
   },
@@ -117,7 +151,9 @@
         "nombre": "Fundamentos de electricidad y sistemas digitales",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 8
       },
       {
         "id": "n3-2",
@@ -125,7 +161,9 @@
         "nombre": "Matemáticas discretas",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n3-3",
@@ -133,7 +171,13 @@
         "nombre": "Estructuras de datos",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n2-4"
+        ],
+        "correquisitos": [
+          "n3-2"
+        ],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n3-4",
@@ -141,7 +185,13 @@
         "nombre": "Diseño de software",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n2-4"
+        ],
+        "correquisitos": [
+          "n3-5"
+        ],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n3-5",
@@ -149,7 +199,11 @@
         "nombre": "Sistema de bases de datos",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n1-4"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n3-6",
@@ -157,7 +211,11 @@
         "nombre": "Inglés III",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n2-6"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       }
     ]
   },
@@ -171,7 +229,13 @@
         "nombre": "Organización de computadores",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n3-1"
+        ],
+        "correquisitos": [
+          "n4-2"
+        ],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n4-2",
@@ -179,7 +243,11 @@
         "nombre": "Programación de sistemas",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n2-4"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n4-3",
@@ -187,7 +255,12 @@
         "nombre": "Estadística",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n2-2",
+          "n1-4"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n4-4",
@@ -195,7 +268,12 @@
         "nombre": "Interacción humano computador",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n1-3",
+          "n2-4"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n4-5",
@@ -203,7 +281,9 @@
         "nombre": "Redes de datos",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 14
       },
       {
         "id": "n4-6",
@@ -211,7 +291,11 @@
         "nombre": "Inglés IV",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n3-6"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       }
     ]
   },
@@ -225,7 +309,11 @@
         "nombre": "Sistemas operativos",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n4-1"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n5-2",
@@ -233,7 +321,11 @@
         "nombre": "Análisis de algoritmos",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n3-3"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n5-3",
@@ -241,7 +333,11 @@
         "nombre": "Desarrollo de aplicaciones web y móviles",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n3-4"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n5-4",
@@ -249,15 +345,24 @@
         "nombre": "Ingeniería de software I",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n3-4",
+          "n4-4"
+        ],
+        "correquisitos": [
+          "n5-3"
+        ],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n5-5",
-        "codigo": "ADSG1005",
+        "codigo": "ADMG1005",
         "nombre": "Emprendimiento e innovación",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 20
       },
       {
         "id": "n5-6",
@@ -265,7 +370,11 @@
         "nombre": "Inglés V",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n4-6"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       }
     ]
   },
@@ -279,7 +388,11 @@
         "nombre": "Seguridad de la información",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n4-2"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n6-2",
@@ -287,7 +400,11 @@
         "nombre": "Metodología de la investigación en computación",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n4-3"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n6-3",
@@ -295,7 +412,9 @@
         "nombre": "Lenguajes de programación",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 20
       },
       {
         "id": "n6-4",
@@ -303,7 +422,11 @@
         "nombre": "Ingeniería de software II",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n5-4"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n6-5",
@@ -311,7 +434,9 @@
         "nombre": "Ciencias de la sostenibilidad",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 20
       },
       {
         "id": "n6-6",
@@ -319,7 +444,9 @@
         "nombre": "Prácticas de servicio comunitario",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       }
     ]
   },
@@ -333,7 +460,12 @@
         "nombre": "Inteligencia artificial",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n4-3",
+          "n6-3"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n7-2",
@@ -341,7 +473,9 @@
         "nombre": "Sistemas de información",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 30
       },
       {
         "id": "n7-3",
@@ -349,7 +483,12 @@
         "nombre": "Sistemas distribuidos y computación en la nube",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n4-2",
+          "n4-5"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n7-4",
@@ -357,7 +496,11 @@
         "nombre": "Dirección de proyectos informáticos",
         "horas": 6,
         "creditos": 2,
-        "prerrequisitos": []
+        "prerrequisitos": [
+          "n5-5"
+        ],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n7-5",
@@ -365,7 +508,9 @@
         "nombre": "Itinerario I",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       }
     ]
   },
@@ -379,7 +524,9 @@
         "nombre": "Complementarias de humanísticas",
         "horas": 3,
         "creditos": 1,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n8-2",
@@ -387,7 +534,9 @@
         "nombre": "Materia integradora de computación",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 39
       },
       {
         "id": "n8-3",
@@ -395,7 +544,9 @@
         "nombre": "Itinerario II",
         "horas": 9,
         "creditos": 3,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       },
       {
         "id": "n8-4",
@@ -403,7 +554,9 @@
         "nombre": "Prácticas preprofesionales empresariales",
         "horas": 5,
         "creditos": 1.67,
-        "prerrequisitos": []
+        "prerrequisitos": [],
+        "correquisitos": [],
+        "materiasAprobadasMin": 0
       }
     ]
   }
